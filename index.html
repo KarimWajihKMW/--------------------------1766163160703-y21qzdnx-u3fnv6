@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة المدارس - أكوادرا</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      body {
+        font-family: 'Cairo', sans-serif;
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+      }
+      .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 h-screen overflow-hidden flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white flex-col hidden md:flex shadow-xl z-20 transition-all duration-300">
+        <div class="p-6 flex items-center gap-3 border-b border-slate-800">
+            <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-school"></i>
+            </div>
+            <span class="text-xl font-bold tracking-wide">نظام المدارس</span>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <button onclick="showSection('dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors bg-slate-800 text-indigo-400" data-target="dashboard">
+                <i class="fa-solid fa-chart-pie w-6"></i>
+                <span>لوحة التحكم</span>
+            </button>
+            <button onclick="showSection('schools')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors" data-target="schools">
+                <i class="fa-solid fa-building w-6"></i>
+                <span>المدارس</span>
+            </button>
+            <button onclick="showSection('employees')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors" data-target="employees">
+                <i class="fa-solid fa-chalkboard-user w-6"></i>
+                <span>الموظفين والمعلمين</span>
+            </button>
+            <button onclick="showSection('students')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors" data-target="students">
+                <i class="fa-solid fa-user-graduate w-6"></i>
+                <span>الطلاب</span>
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-slate-800 text-sm text-slate-400 text-center">
+            نظام إدارة v1.0
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-screen overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center z-10">
+            <div class="flex items-center gap-4">
+                <button class="md:hidden text-slate-600 hover:text-indigo-600" onclick="toggleMobileMenu()">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+                <h2 id="page-title" class="text-xl font-bold text-slate-800">لوحة التحكم</h2>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <span class="font-medium hidden sm:block">مدير النظام</span>
+            </div>
+        </header>
+
+        <!-- Scrollable Content Area -->
+        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="space-y-6 block">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Stat Card 1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">عدد المدارس</p>
+                            <h3 id="stat-schools" class="text-3xl font-bold text-indigo-600">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 text-xl">
+                            <i class="fa-solid fa-building"></i>
+                        </div>
+                    </div>
+                    <!-- Stat Card 2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">عدد الموظفين</p>
+                            <h3 id="stat-employees" class="text-3xl font-bold text-emerald-600">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 text-xl">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                    </div>
+                    <!-- Stat Card 3 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">عدد الطلاب</p>
+                            <h3 id="stat-students" class="text-3xl font-bold text-amber-600">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 text-xl">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity / Quick View -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">نظرة عامة سريعة</h3>
+                    <p class="text-gray-500">مرحباً بك في لوحة التحكم. استخدم القائمة الجانبية للتنقل بين سجلات المدارس، الموظفين، والطلاب.</p>
+                </div>
+            </section>
+
+            <!-- Schools Section -->
+            <section id="schools-section" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold">إدارة المدارس</h3>
+                    <button onclick="openModal('school-modal')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                        <i class="fa-solid fa-plus"></i> إضافة مدرسة
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-gray-50 text-gray-600 font-medium border-b">
+                                <tr>
+                                    <th class="p-4">اسم المدرسة</th>
+                                    <th class="p-4">العنوان</th>
+                                    <th class="p-4">النوع</th>
+                                    <th class="p-4">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schools-list" class="divide-y divide-gray-100">
+                                <!-- Content rendered by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no-schools-msg" class="p-8 text-center text-gray-400 hidden">
+                        لا توجد مدارس مضافة حالياً.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Employees Section -->
+            <section id="employees-section" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold">الموظفين والمعلمين</h3>
+                    <button onclick="openModal('employee-modal')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                        <i class="fa-solid fa-plus"></i> إضافة موظف
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-gray-50 text-gray-600 font-medium border-b">
+                                <tr>
+                                    <th class="p-4">الاسم</th>
+                                    <th class="p-4">الوظيفة</th>
+                                    <th class="p-4">المدرسة التابع لها</th>
+                                    <th class="p-4">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employees-list" class="divide-y divide-gray-100">
+                                <!-- Content rendered by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no-employees-msg" class="p-8 text-center text-gray-400 hidden">
+                        لا يوجد موظفين مضافين حالياً.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Students Section -->
+            <section id="students-section" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold">الطلاب</h3>
+                    <button onclick="openModal('student-modal')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                        <i class="fa-solid fa-plus"></i> إضافة طالب
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-gray-50 text-gray-600 font-medium border-b">
+                                <tr>
+                                    <th class="p-4">اسم الطالب</th>
+                                    <th class="p-4">المرحلة الدراسية</th>
+                                    <th class="p-4">المدرسة</th>
+                                    <th class="p-4">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-list" class="divide-y divide-gray-100">
+                                <!-- Content rendered by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no-students-msg" class="p-8 text-center text-gray-400 hidden">
+                        لا يوجد طلاب مضافين حالياً.
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="mobile-backdrop" class="fixed inset-0 bg-black/50 z-10 hidden md:hidden" onclick="toggleMobileMenu()"></div>
+    
+    <!-- Mobile Sidebar -->
+    <div id="mobile-sidebar" class="fixed inset-y-0 right-0 w-64 bg-slate-900 text-white z-20 transform translate-x-full transition-transform duration-300 md:hidden flex flex-col">
+         <div class="p-6 flex items-center justify-between border-b border-slate-800">
+            <span class="text-xl font-bold">نظام المدارس</span>
+            <button onclick="toggleMobileMenu()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <button onclick="showSection('dashboard'); toggleMobileMenu()" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors bg-slate-800 text-indigo-400" data-target="dashboard">
+                <i class="fa-solid fa-chart-pie w-6"></i> لوحة التحكم
+            </button>
+            <button onclick="showSection('schools'); toggleMobileMenu()" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors" data-target="schools">
+                <i class="fa-solid fa-building w-6"></i> المدارس
+            </button>
+            <button onclick="showSection('employees'); toggleMobileMenu()" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors" data-target="employees">
+                <i class="fa-solid fa-chalkboard-user w-6"></i> الموظفين
+            </button>
+            <button onclick="showSection('students'); toggleMobileMenu()" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors" data-target="students">
+                <i class="fa-solid fa-user-graduate w-6"></i> الطلاب
+            </button>
+        </nav>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Add School Modal -->
+    <div id="school-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <h3 class="text-xl font-bold mb-4 text-slate-800">إضافة مدرسة جديدة</h3>
+            <form id="school-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">اسم المدرسة</label>
+                    <input type="text" name="name" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">العنوان / المدينة</label>
+                    <input type="text" name="address" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">النوع</label>
+                    <select name="type" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <option value="بنين">بنين</option>
+                        <option value="بنات">بنات</option>
+                        <option value="مشترك">مشترك</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('school-modal')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-lg font-medium transition-colors">إلغاء</button>
+                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg font-medium transition-colors">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div id="employee-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <h3 class="text-xl font-bold mb-4 text-slate-800">إضافة موظف جديد</h3>
+            <form id="employee-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">الاسم الثلاثي</label>
+                    <input type="text" name="name" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">المسمى الوظيفي</label>
+                    <input type="text" name="role" placeholder="مثال: معلم رياضيات" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">المدرسة التابع لها</label>
+                    <select name="schoolId" id="employee-school-select" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
+                        <option value="">اختر المدرسة...</option>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('employee-modal')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-lg font-medium transition-colors">إلغاء</button>
+                    <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg font-medium transition-colors">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="student-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <h3 class="text-xl font-bold mb-4 text-slate-800">إضافة طالب جديد</h3>
+            <form id="student-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">اسم الطالب</label>
+                    <input type="text" name="name" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">المرحلة الدراسية</label>
+                    <select name="grade" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <option value="المرحلة الابتدائية">المرحلة الابتدائية</option>
+                        <option value="المرحلة المتوسطة">المرحلة المتوسطة</option>
+                        <option value="المرحلة الثانوية">المرحلة الثانوية</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">المدرسة</label>
+                    <select name="schoolId" id="student-school-select" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
+                        <option value="">اختر المدرسة...</option>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('student-modal')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-lg font-medium transition-colors">إلغاء</button>
+                    <button type="submit" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-lg font-medium transition-colors">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
